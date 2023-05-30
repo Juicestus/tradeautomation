@@ -1,52 +1,40 @@
 from alpaca.data.timeframe import TimeFrame
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 import time
+from settings import SymbolType
 
-def register():
-    return TimeFrame.Minute, ['ETH/USDT'], 2
+def register(settings):
+    settings.timeframe = TimeFrame.Minute
+    settings.symbols = ['AAPL']
+    settings.symbol_type = SymbolType.Stock
+    settings.past_days = 40
+    return settings
 
-def plot_ohlc(df):
-    x = np.arange(0, len(df))
-    fig, ax = plt.subplots(1, figsize=(12,6))
-    for idx, (_, val) in enumerate(df.iterrows()):
-        color= '#F04730' if val['open'] > val['close'] else '#2CA453'
-        # high/low lines
-        ax.plot([x[idx], x[idx]], 
-                [val['low'], val['high']], 
-                color=color)
-        # open marker
-        ax.plot([x[idx], x[idx]-0.1], 
-                [val['open'], val['open']], 
-                color=color)
-        # close marker
-        ax.plot([x[idx], x[idx]+0.1], 
-                [val['close'], val['close']], 
-                color=color)
-   
-def run_plot(stop=False):
-    plt.show(block=stop)
-    if stop: return
-    plt.pause(.01)
-    plt.close()
-    
-
-def update(df, size):
+def update(symbol, df):
 
     if len(df) < 100:
-        return
+        return df, 0
     
-    df['sma_30'] = df['close'].rolling(30).mean()
-    df['sma_100'] = df['close'].rolling(100).mean()
+    df['short'] = df['close'].rolling(10).mean()
+    df['long'] = df['close'].rolling(50).mean()
+
+    # print("----")
+    # print(str(df['short'].iloc[-1]) + " vs " + str(df['long'].iloc[-1]))
+    # print(str(df['short'].iloc[-2]) + " vs " + str(df['long'].iloc[-2]))
+
+    if df['short'].iloc[-1] > df['long'].iloc[-1] and df['short'].iloc[-2] < df['long'].iloc[-2]:
+        return df, -.2
+    elif df['short'].iloc[-1] < df['long'].iloc[-1] and df['short'].iloc[-2] > df['long'].iloc[-2]:
+        return df, .2
     
+    return df, 0 
+
+'''
     if len(df) < size - 2:
         return
     
-    plot_ohlc(df)
-    
-    plt.plot(np.array(df['sma_30']), color='#F04730')
-    plt.plot(np.array(df['sma_100']), color='#F04730')
-    
-    run_plot(stop=True)
+    plt.plot(np.array(df['short']), color='#F04730')
+    plt.plot(np.array(df['long']), color='#F04730')
+    '''
     

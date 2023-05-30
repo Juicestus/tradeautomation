@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 import keys, util
 import asyncio
+from settings import SymbolType
 
 crypto_client = CryptoHistoricalDataClient()
 stock_client = StockHistoricalDataClient(api_key=keys.API_KEY, secret_key=keys.SECRET_KEY)
@@ -35,6 +36,13 @@ def download_auto(symbols, start=datetime.now(), timeframe=TimeFrame.Minute):
                 else download_stock(symbol, start, timeframe)
     return data
 
+def download(settings):
+    start = util.n_days_ago(settings.past_days)
+    data = dict()
+    for symbol in settings.symbols:
+        data[symbol] = download_crypto(symbol, start, settings.timeframe) if settings.is_crypto() \
+                else download_stock(symbol, start, settings.timeframe)
+    return data
 
 handlers = dict()
 live_data_map = dict()
@@ -48,7 +56,8 @@ async def handler(bar):
         live_data_map[bar.symbol] = pd.concat(live_data_map[bar.symbol], df)
     handlers[bar.symbol](live_data_map[bar.symbol])
     
-def subscribe(symbols, callback, past_days=0):
+# Deprecated
+def subscribe_dep(symbols, callback, past_days=0):
      
     for symbol in symbols:
         handlers[symbol] = callback
@@ -66,4 +75,22 @@ def subscribe(symbols, callback, past_days=0):
         stock_stream.run()
     else:
         raise Exception("Live cant have mixed crypto and stock symbols")
+    
+def subscribe(callback, settings):
+    for symbol in settings.symbols:
+        handlers[symbol] = callback
+        
+        if util.is_crypto(symbol):
+            crypto_stream.subscribe_bars(handler, symbol)
+            
+            # Ignore this for now
+            #if past_days > 0 or past_days is None:
+            #     live_data_map[symbol] = download_crypto(symbol, util.n_days_ago(past_days), TimeFrame.Minute)
+        else:
+            stock_stream.subscribe_bars(handler, symbol)
+    
+    if settings.is_crypto():
+        crypto_stream.run()
+    else:
+        stock_stream.run()
         

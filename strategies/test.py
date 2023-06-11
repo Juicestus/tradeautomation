@@ -8,7 +8,7 @@ def register(settings):
     settings.timeframe = TimeFrame.Minute
     settings.symbols = ['AAPL']
     settings.symbol_type = SymbolType.Stock
-    settings.past_days = 40
+    settings.past_days = 10
     return settings
 
 def update(symbol, df):

@@ -2,7 +2,7 @@ from alpaca.data.timeframe import TimeFrame
 import pandas as pd
 import numpy as np
 import time
-from settings import SymbolType
+from legacy.settings import SymbolType
 
 def register(settings):
     settings.timeframe = TimeFrame.Minute
@@ -20,7 +20,7 @@ def update(symbol, df):
     df['long'] = df['close'].rolling(50).mean()
 
     # print("----")
-    # print(str(df['short'].iloc[-1]) + " vs " + str(df['long'].iloc[-1]))
+
     # print(str(df['short'].iloc[-2]) + " vs " + str(df['long'].iloc[-2]))
 
     if df['short'].iloc[-1] > df['long'].iloc[-1] and df['short'].iloc[-2] < df['long'].iloc[-2]:

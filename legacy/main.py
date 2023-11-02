@@ -1,11 +1,11 @@
 
-import sys, importlib, asyncio, data, util
+import sys, importlib, asyncio, priceanalytics.data as data, util
 import matplotlib.pyplot as plt
 import numpy as np
 
 from alpaca.data.timeframe import TimeFrame
 
-from settings import *
+from legacy.settings import *
   
 def run_plot(stop=False):
     plt.show(block=stop)
@@ -25,7 +25,11 @@ def backtest(s, settings):
         buys = []
         sells = []
         for i in range(l):
-            dirty, order = s.update(symbol, df[0:i].copy())
+            dirty, order = s.update(symbol, df[0:i].copy(), equity)
+            
+            if abs(order) > 1:
+                print("Order too large: " + str(order))
+                exit(1)
             
             if order > 0 and last_buy_price == -1:
                 cash -= order
@@ -35,7 +39,7 @@ def backtest(s, settings):
             elif order < 0 and last_buy_price != -1:
                 gain = df['close'].iloc[i] / last_buy_price
                 cash += equity * gain
-                equity = 0 
+                equity -= abs(order)
                 last_buy_price = -1
                 sells.append(i)
             else:

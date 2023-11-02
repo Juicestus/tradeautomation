@@ -1,0 +1,96 @@
+NPLOTS = 2
+fig = plt.figure(figsize=(10, 7))
+ax1 = fig.add_subplot(NPLOTS, 1, 1)
+ax1 = plot.plot_ohlc(sl_wt, ax1)
+
+class CrossOver:
+    def __init__(self, df, i):
+        self.df = df
+        self.i = i
+
+    def crossover(self, k1, k2):
+        """
+        self.df[k1] crossed over self.df[k2] at self.i
+        """    
+        return self.df[k1][self.i] > self.df[k2][self.i] \
+            and self.df[k1][self.i-1] < self.df[k2][self.i-1]
+
+results = []
+    
+for i in range(1, len(sl_wt)): # yes this works fine
+    c = CrossOver(sl_wt, i)
+    
+    if (c.crossover("wt1", "wt2")):
+        plt.axvline(x=i, color='#800080')
+#         print(f"A = {i}")
+        #sl_wt.at[i, "output"] = sl_wt["close"][i]
+        results.append( sl_wt["close"][i])
+
+    elif (c.crossover("wt2", "wt1")):
+        plt.axvline(x=i, color='#FFA500')
+#         print(f"B = {i}")
+        #sl_wt.at[i, "output"] = sl_wt["close"][i]
+        results.append(sl_wt["close"][i])
+
+# print(sl_wt["output"].tail())
+    
+#     wt1_ddt = sl_wt["wt1_ddt"][i]
+#     wt2_ddt = sl_wt["wt2_ddt"][i]
+#     wt1_ddt2 = sl_wt["wt1_ddt2"][i]
+#     wt2_ddt2 = sl_wt["wt1_ddt2"][i]
+    
+#     last_wt1_ddt = sl_wt["wt1_ddt"][i - 1]
+#     last_wt2_ddt = sl_wt["wt2_ddt"][i - 1]
+#     last_wt1_ddt2 = sl_wt["wt1_ddt2"][i - 1]
+#     last_wt2_ddt2 = sl_wt["wt1_ddt2"][i - 1]
+
+#     if abs(wt1_ddt):
+#     if (wt1_ddt > 0) != (wt2_ddt < 0):
+#     if abs(sl_wt["wt1_ddt"][i]) < .5:
+#         plt.axvline(x=i, color='#000000')
+# #         if wt1_ddt > 0:
+#             plt.axvline(x=i, color='b')
+#         elif wt1_ddt < 0:
+#             plt.axvline(x=i, color='r')
+
+
+ax2 = fig.add_subplot(NPLOTS, 1, 2)
+
+ax2.plot(np.array(results))
+
+last = False
+wins, losses = 0, 0
+win_gain, loss_gain = [], []
+for i in range(1, len(results)):
+    gain = (results[i] - results[i-1]) / results[i-1]
+    current = results[i] > results[i-1]
+    if last != current: 
+        wins += 1
+        win_gain.append(gain)
+    else: 
+        losses += 1
+        loss_gain.append(gain)
+    last = current
+    
+avg_win_gain = sum(win_gain) / len(win_gain)
+avg_loss_gain = sum(loss_gain) / len(loss_gain)
+    
+print(wins, losses)
+print(avg_win_gain, avg_loss_gain)
+
+# ax2 = plot.plot_ohlc(ha_data, ax2)
+
+# plt.plot(np.array(sl_wt['wt1']), color='#000000')
+# plt.plot(np.array(sl_wt['wt2']), color='#FF0000')
+
+# ax3 = fig.add_subplot(NPLOTS, 1, 3)
+
+# plt.plot(np.array(sl_wt['wt1_ddt']), color='#000000')
+# plt.plot(np.array(sl_wt['wt2_ddt']), color='#FF0000')
+
+# ax4 = fig.add_subplot(NPLOTS, 1, 4)
+
+# plt.plot(np.array(sl_wt['wt1_ddt2']), color='#000000')
+# plt.plot(np.array(sl_wt['wt2_ddt2']), color='#FF0000')
+
+plot.do_plot()

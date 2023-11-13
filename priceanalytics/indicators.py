@@ -7,10 +7,10 @@ def n_log_10_safe(x):
     if x == 0: return 0
     return math.copysign(math.log10(abs(x)), x)
 
-def force_index(df, n): 
+def force_index(df, n):
     return df.join(pd.Series(df['close'].diff(n) * df['volume'], name='force_index'))
 
-def force_index_log(df, n): 
+def force_index_log(df, n):
     return df.join(force_index(df, n)['force_index'].map(n_log_10_safe))
 
 '''
@@ -77,25 +77,25 @@ def add_fft(df, col_x, col_y): #the following is removed because interp doesnt w
     x = np.arange(0,1, 1 / s_len)
     freqs = np.fft.fftfreq(s_len, 1 / s_len)
     y = 0
-    
+
     for i in range(s_len):
         x_i = freqs[i] * 2 * np.pi * x
         y += 1 / s_len * (fft[i].real * np.cos(x_i) - fft[i].imag * np.sin(x_i))
-    
+
     # d_len = len(df[col_x])
     # if s_len != d_len:
         # This is broken and does not work as expected.
         # y = np.interp(np.linspace(0, len(y) - 1, num=d_len), np.arange(len(y)), y)
     df[col_y] = pd.Series(y, df.index, name=col_y)
-    
+
     return df
 
 def calc_rsi(over, fn_roll, length):
     """
-    Computes the RSI of over using fn_roll 
-    """ 
+    Computes the RSI of over using fn_roll
+    """
     delta = over.diff()
-    delta = delta[1:] 
+    delta = delta[1:]
 
     up, down = delta.clip(lower=0), delta.clip(upper=0).abs()
     roll_up, roll_down = fn_roll(up), fn_roll(down)
@@ -117,5 +117,44 @@ def rsi_ema(df, x_col, y_col, l):
     return df
 
 def rsi_rma(df, x_col, y_col, l):
-    df[y_col] = calc_rsi(df[x_col], lambda s: s.ewm(alpha = 1 / l).mean(), l) 
+    df[y_col] = calc_rsi(df[x_col], lambda s: s.ewm(alpha = 1 / l).mean(), l)
     return df
+
+def __andean_osc(close, _open, _len, sig_len):
+
+    N = len(close)
+    alpha = 2 / (_len + 1)
+    alpha_sig = 2 / (sig_len + 1)
+
+    up1, up2, dn1, dn2, bull, bear, sig = np.zeros((7, N))
+
+    up1[0] = dn1[0] = sig[0] = close[0]
+    up2[0] = dn2[0] = close[0] ** 2
+
+    for i in range(1, N):
+        up1[i] = max(close[i], _open[i], up1[i - 1] - alpha * (up1[i - 1] - close[i]))
+        dn1[i] = min(close[i], _open[i], dn1[i - 1] + alpha * (close[i] - dn1[i - 1]))
+
+        up2[i] = max(close[i] ** 2, _open[i] ** 2, up2[i - 1] - alpha * (up2[i - 1] - close[i] ** 2))
+        dn2[i] = min(close[i] ** 2, _open[i] ** 2, dn2[i - 1] + alpha * (close[i] ** 2 - dn2[i - 1]))
+
+        bull[i] = np.sqrt(dn2[i] - dn1[i] ** 2)
+        bear[i] = np.sqrt(up2[i] - up1[i] ** 2)
+
+        sig[i] = sig[i - 1] + alpha_sig * (np.maximum(bull[i], bear[i]) - sig[i - 1])
+
+    return bull, bear, sig
+
+def add_andean_osc(df, _len=25, sig_len=9):
+    close = df['close'].to_numpy()
+    _open = df['open'].to_numpy()
+
+    bull, bear, sig = __andean_osc(close, _open, _len, sig_len)
+
+    df['andean_bull'] = bull.tolist()
+    df['andean_bear'] = bear.tolist()
+    df['andean_signal'] = sig.tolist()
+
+    return df
+
+

@@ -12,6 +12,8 @@ class Backtester(object):
         self.buys = {}
         self.sells = {}
         self.verb = verbose
+        self.i_price = None
+        self.in_position = False
 
     def __enter__(self):
         return self
@@ -84,8 +86,10 @@ class Backtester(object):
     def __next__(self):
         self.i += 1
         if self.i >= self.m:
+            self.i_price = None
             raise StopIteration
         self.fr = self.df[:self.i]
+        self.i_price = self.price_at(self.i)
         return self.i, self.fr
 
     def crossover(self, k1, k2):
@@ -93,14 +97,59 @@ class Backtester(object):
             and self.fr[k1][-2] < self.fr[k2][-2]
 
     def buy(self):
-        self.buys[self.i] = self.df.iloc[self.i]['close']
+        self.in_position = True
+        self.buys[self.i] = self.price_at(self.i)
 
     def sell(self):
-        self.sells[self.i] = self.df.iloc[self.i]['close']
+        self.in_position = False
+        self.sells[self.i] = self.price_at(self.i)
 
     def at(self, i):
         return self.df['close'][i]
 
+    def price_at(self, i):
+        return self.at(i)
+
+    def price(self):
+        if self.i_price is None:
+            raise Exception("Cannot access this function from outside iteration")
+        return self.i_price
+
+
+
 def perc_ret(incr):
     return round(incr * 100, 2)
 
+def avg(l):
+    return sum(l)/len(l)
+
+def med(l):
+    return sorted(l)[len(l)//2]
+
+# this is kindof bullshit
+def mode(l, p=2):
+    y = {}
+    for r in l:
+        a = round(r, p)
+        if a not in y.keys():
+            y[a] = 0
+        y[a] += 1
+    m = max(y.values())
+    for g, l in y.items():
+        if l == m:
+            return g
+    return None
+
+def print_test_results(rets):
+    print('Model Results\n')
+    print(f'maximum: {perc_ret(max(rets)):7.2f}%')
+    print(f'median: {perc_ret(med(rets)):8.2f}%')
+    print(f'minimum: {perc_ret(min(rets)):7.2f}%')
+    print(f'mean: {perc_ret(avg(rets)):10.2f}%')
+    print(f'mode: {perc_ret(mode(rets, p=3)):10.2f}%')
+
+    print(f'\noperated:  {len(rets):3d} days')
+    t = 1
+    for ret in rets:
+        t *= 1 + ret
+    print(f'returned:   {perc_ret(t-1):.2f}%')

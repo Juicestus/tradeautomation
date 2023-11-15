@@ -8,6 +8,7 @@ from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 from datetime import datetime, timedelta
 import pandas as pd
 import priceanalytics.keys as keys
+from priceanalytics.backtest import perc_ret
 import asyncio
 from legacy.settings import SymbolType
 import os
@@ -36,7 +37,7 @@ def download_crypto(symbol, start, timeframe):
                     timeframe=timeframe,
                     start=start
             )).df
-    
+
 def download_stock(symbol, start, timeframe):
     return stock_client.get_stock_bars(
             StockBarsRequest(
@@ -73,49 +74,49 @@ live_data_map = dict()
 async def handler(bar):
     df = pd.DataFrame({k: [v] for k, v in bar})
     if bar.symbol not in live_data_map:
-        live_data_map[bar.symbol] = df 
+        live_data_map[bar.symbol] = df
     else:
         live_data_map[bar.symbol] = pd.concat(live_data_map[bar.symbol], df)
     handlers[bar.symbol](live_data_map[bar.symbol])
-    
+
 # Deprecated
 def subscribe_dep(symbols, callback, past_days=0):
-     
+
     for symbol in symbols:
         handlers[symbol] = callback
-        
+
         if is_crypto(symbol):
             crypto_stream.subscribe_bars(handler, symbol)
             if past_days > 0 or past_days is None:
                 live_data_map[symbol] = download_crypto(symbol, n_days_ago(past_days), TimeFrame.Minute)
         else:
             stock_stream.subscribe_bars(handler, symbol)
-            
+
     if (all_crypto(symbols)):
         crypto_stream.run()
     elif (all_stock(symbols)):
         stock_stream.run()
     else:
         raise Exception("Live cant have mixed crypto and stock symbols")
-    
+
 def subscribe(callback, settings):
     for symbol in settings.symbols:
         handlers[symbol] = callback
-        
+
         if is_crypto(symbol):
             crypto_stream.subscribe_bars(handler, symbol)
-            
+
             # Ignore this for now
             #if past_days > 0 or past_days is None:
             #     live_data_map[symbol] = download_crypto(symbol, n_days_ago(past_days), TimeFrame.Minute)
         else:
             stock_stream.subscribe_bars(handler, symbol)
-    
+
     if settings.is_crypto():
         crypto_stream.run()
     else:
         stock_stream.run()
-        
+
 class Slicer:
     def __init__(self, weekday, start):
         self.weekday = weekday
@@ -135,9 +136,9 @@ def download_df_map(tickers, past_days=50, interval=5):
     tdfs = {}
     for ticker in tickers:
         df = download_simple(ticker, past_days=past_days, interval=interval)
-        
+
         print(f"raw {ticker}: {len(df.index)} datapoints from {df.index[0][-1].date()} to {df.index[-1][-1].date()}")
-        last_day = 0 
+        last_day = 0
         info = {} # { day: Slicer }
         for i, (index, row) in enumerate(df.iterrows()):
             ts = index[1].to_pydatetime()
@@ -147,12 +148,12 @@ def download_df_map(tickers, past_days=50, interval=5):
                     info[last_day].end = i - 1
                 info[day] = Slicer(ts.weekday(), i)
             last_day = day
-            
+
         tdfs[ticker] = []
         for i, slice in info.items():
             if not slice.valid(): continue
             tdfs[ticker].append(df[slice.start:slice.end])
-    return tdfs 
+    return tdfs
 
 
 def cache_df_map(tdfs, _dir="cache"):
@@ -165,9 +166,9 @@ def cache_df_map(tdfs, _dir="cache"):
             s = df.to_json()
             with open(fn, 'w') as f:
                 f.write(s)
-    
+
 def load_cached_df_map(_dir="cache"):
-    tdfs = {} 
+    tdfs = {}
     for tup in os.walk(_dir):
         pre = tup[0]
         ticker = pre.replace(_dir + '/', '')
@@ -178,4 +179,17 @@ def load_cached_df_map(_dir="cache"):
             i = int(f.replace('.json', ''))
             tdfs[ticker][i] = pd.read_json(path)
     return tdfs
-                
+
+def combine_dataset(_map):
+    combined = []
+    for ticker, dfs in _map.items():
+        combined += dfs
+    return combined
+
+def calc_returns_homogenous(dataset, verbose=True):
+    s = dataset[0].iloc[0]['close']
+    e = dataset[-1].iloc[-1]['close']
+    r = (e - s)/s
+    if verbose:
+        print(f'homogenous dataset yields: {perc_ret(r):5.2f}% returns')
+    return r

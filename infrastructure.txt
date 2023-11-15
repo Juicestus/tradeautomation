@@ -1,0 +1,3 @@
+Alpaca links
+https://docs.alpaca.markets/docs/sdks-and-tools
+https://docs.alpaca.markets/docs/about-market-data-api

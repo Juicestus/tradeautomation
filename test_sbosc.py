@@ -19,25 +19,25 @@ def test_and_strat(total, _len, sig_len):
 
 
 
-        df = I.add_andean_osc(df, _len=_len, sig_len=sig_len)
+        df = I.add_square_bounds_osc(df, _len=_len, sig_len=sig_len)
         df = df.iloc[_len:]
 
         # with MultiPlot(2, size=(40,20)) as m:
         #     m.ohlc(df)
         #     m.next()
-        #     plt.plot(np.array(df['andean_bull']), color='#00ff00')
-        #     plt.plot(np.array(df['andean_bear']), color='#ff0000')
-        #     plt.plot(np.array(df['andean_signal']), color='#000000')
+        #     plt.plot(np.array(df['sbosc_bull']), color='#00ff00')
+        #     plt.plot(np.array(df['sbosc_bear']), color='#ff0000')
+        #     plt.plot(np.array(df['sbosc_signal']), color='#000000')
 
         #print('\nSAMPLE #', n + 1)
 
         with Backtester(df, verbose=False) as b:
             for i, fr in b:
-                if b.crossover("andean_bull", "andean_bear"):
+                if b.crossover("sbosc_bull", "sbosc_bear"):
                     b.buy()
     #                 print("buy @ $", b.at(i))
 
-                elif b.crossover("andean_signal", "andean_bull"):
+                elif b.crossover("sbosc_signal", "sbosc_bull"):
                     b.sell()
     #                 print("sell @ $", b.at(i))
     #             b.sell()
@@ -52,9 +52,9 @@ def test_and_strat(total, _len, sig_len):
     #         with MultiPlot(2, size=(40,20)) as m:
     #             m.ohlc(df)
     #             m.next()
-    #             plt.plot(np.array(df['andean_bull']), color='#00ff00')
-    #             plt.plot(np.array(df['andean_bear']), color='#ff0000')
-    #             plt.plot(np.array(df['andean_signal']), color='#000000')
+    #             plt.plot(np.array(df['sbosc_bull']), color='#00ff00')
+    #             plt.plot(np.array(df['sbosc_bear']), color='#ff0000')
+    #             plt.plot(np.array(df['sbosc_signal']), color='#000000')
 
 def target(_len_range, sig_len_range, q, dataset):
     for _len in _len_range:
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     import json
 
-    with open('and_results_x.json', 'w') as f:
+    with open('sbosc_results.json', 'w') as f:
 
         def save():
             f.write(json.dumps(results))

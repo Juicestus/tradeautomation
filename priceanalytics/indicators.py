@@ -120,7 +120,7 @@ def rsi_rma(df, x_col, y_col, l):
     df[y_col] = calc_rsi(df[x_col], lambda s: s.ewm(alpha = 1 / l).mean(), l)
     return df
 
-def __andean_osc(close, _open, _len, sig_len):
+def __square_bounds_osc(close, _open, _len, sig_len):
 
     N = len(close)
     alpha = 2 / (_len + 1)
@@ -145,15 +145,15 @@ def __andean_osc(close, _open, _len, sig_len):
 
     return bull, bear, sig
 
-def add_andean_osc(df, _len=25, sig_len=9):
+def add_square_bounds_osc(df, _len=25, sig_len=9):
     close = df['close'].to_numpy()
     _open = df['open'].to_numpy()
 
-    bull, bear, sig = __andean_osc(close, _open, _len, sig_len)
+    bull, bear, sig = __square_bounds_osc(close, _open, _len, sig_len)
 
-    df['andean_bull'] = bull.tolist()
-    df['andean_bear'] = bear.tolist()
-    df['andean_signal'] = sig.tolist()
+    df['sbosc_bull'] = bull.tolist()
+    df['sbosc_bear'] = bear.tolist()
+    df['sbosc_signal'] = sig.tolist()
 
     return df
 

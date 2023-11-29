@@ -29,7 +29,7 @@ func LoadAPIConfig(filename string) *APIConfig {
 }
 
 func (cfg *APIConfig) String() string {
-	return fmt.Sprintf("ApiKey=%s\nSecretKey=%s", cfg.ApiKey, cfg.SecretKey)
+	return fmt.Sprintf("ApiKey=%s SecretKey=%s", cfg.ApiKey, cfg.SecretKey)
 }
 
 

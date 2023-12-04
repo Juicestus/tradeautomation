@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"encoding/json"
+  "log"
 )
 
 type APIConfig struct {

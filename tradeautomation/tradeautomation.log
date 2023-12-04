@@ -33,3 +33,20 @@
 2023/12/04 10:28:00 Sell condition: (algorithm)=false && (qty>0)=false
 2023/12/04 10:28:00 Algorithm entering AAPL @ $188.03
 2023/12/04 10:28:00 Order limit buy 489 * AAPL @ $188.03 Σ $91944.23 placed successfully
+2023/12/04 12:22:45 TradingManager: ticker=AAPL
+2023/12/04 12:22:45 Successfully canceled 0 order(s)
+2023/12/04 12:22:45 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 12:22:46 INFO datav2stream: established connection
+2023/12/04 12:22:46 INFO datav2stream: auth error: connection limit exceeded
+2023/12/04 12:22:46 INFO datav2stream: retrying auth in 500ms, attempt 2/16
+2023/12/04 12:22:47 INFO datav2stream: auth error: connection limit exceeded
+2023/12/04 12:22:47 INFO datav2stream: retrying auth in 1s, attempt 3/16
+2023/12/04 12:22:48 INFO datav2stream: auth error: connection limit exceeded
+2023/12/04 12:22:48 INFO datav2stream: retrying auth in 1.5s, attempt 4/16
+2023/12/04 12:22:50 INFO datav2stream: auth error: connection limit exceeded
+2023/12/04 12:22:50 INFO datav2stream: retrying auth in 2s, attempt 5/16
+2023/12/04 16:15:09 TradingManager: ticker=AAPL
+2023/12/04 16:15:09 Successfully canceled 0 order(s)
+2023/12/04 16:15:09 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 16:15:09 INFO datav2stream: established connection
+2023/12/04 16:15:09 INFO datav2stream: finished connection setup

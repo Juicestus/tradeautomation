@@ -1,11 +1,8 @@
 package main
 
 import (
-	//"context"
 	"fmt"
-	//"log"
 	"os"
-	//"time"
 	"encoding/json"
 )
 
@@ -18,12 +15,12 @@ func LoadAPIConfig(filename string) *APIConfig {
 	var cfg APIConfig
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Printf("Failed to open config file%s\n", filename)
+		log.Fatalf("Failed to open config file%s\n", filename)
 	}
 	defer file.Close()
 	parser := json.NewDecoder(file)
 	if err := parser.Decode(&cfg); err != nil {
-		fmt.Printf("Failed to parse config file\n")
+		log.Fatalf("Failed to parse config file\n")
 	}
 	return &cfg
 }

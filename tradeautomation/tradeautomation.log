@@ -1,0 +1,35 @@
+2023/12/04 10:25:49 TradingManager: ticker=AAPL
+2023/12/04 10:25:49 Successfully canceled 0 order(s)
+2023/12/04 10:25:49 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 10:25:49 INFO datav2stream: established connection
+2023/12/04 10:25:49 INFO datav2stream: finished connection setup
+2023/12/04 10:25:49 listen tcp :5000: bind: address already in use
+2023/12/04 10:26:04 TradingManager: ticker=AAPL
+2023/12/04 10:26:04 Successfully canceled 0 order(s)
+2023/12/04 10:26:04 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 10:26:04 INFO datav2stream: established connection
+2023/12/04 10:26:04 INFO datav2stream: finished connection setup
+2023/12/04 10:26:57 TradingManager: ticker=AAPL
+2023/12/04 10:26:57 Successfully canceled 0 order(s)
+2023/12/04 10:26:57 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 10:26:57 INFO datav2stream: established connection
+2023/12/04 10:26:57 INFO datav2stream: finished connection setup
+2023/12/04 10:27:00 TradingManager recived new bar
+2023/12/04 10:27:00 Current trading price of AAPL is $187.92
+2023/12/04 10:27:00 Account buying power is $92037.88
+2023/12/04 10:27:00 Account holds no position in AAPL
+2023/12/04 10:27:00 Buy condition: (algorithm)=false && (qty==0)=true
+2023/12/04 10:27:00 Sell condition: (algorithm)=true && (qty>0)=false
+2023/12/04 10:27:31 TradingManager: ticker=AAPL
+2023/12/04 10:27:32 Successfully canceled 0 order(s)
+2023/12/04 10:27:32 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 10:27:32 INFO datav2stream: established connection
+2023/12/04 10:27:32 INFO datav2stream: finished connection setup
+2023/12/04 10:28:00 TradingManager recived new bar
+2023/12/04 10:28:00 Current trading price of AAPL is $188.03
+2023/12/04 10:28:00 Account buying power is $92037.88
+2023/12/04 10:28:00 Account holds no position in AAPL
+2023/12/04 10:28:00 Buy condition: (algorithm)=true && (qty==0)=true
+2023/12/04 10:28:00 Sell condition: (algorithm)=false && (qty>0)=false
+2023/12/04 10:28:00 Algorithm entering AAPL @ $188.03
+2023/12/04 10:28:00 Order limit buy 489 * AAPL @ $188.03 Σ $91944.23 placed successfully

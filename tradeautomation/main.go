@@ -76,5 +76,5 @@ func main() {
     fmt.Fprintf(w, string(data))
   })
 
-  log.Print(http.ListenAndServe(":8080", nil))
+  log.Print(http.ListenAndServe(":80", nil))
 }

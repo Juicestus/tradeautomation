@@ -128,7 +128,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
     log.Printf("Account holds no position in %s", man.ticker)
   }
 
-  buyCondition := CrossOver(bull, bear) || true
+  buyCondition := CrossOver(bull, bear)
   sellCondition := CrossOver(sig, bull)
 
   log.Printf("Buy condition: (algorithm)=%t && (qty==0)=%t", buyCondition, posQty == 0)

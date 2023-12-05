@@ -55,3 +55,36 @@
 2023/12/04 22:06:13 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
 2023/12/04 22:06:13 INFO datav2stream: established connection
 2023/12/04 22:06:13 INFO datav2stream: finished connection setup
+2023/12/05 04:09:35 TradingManager: ticker=AAPL
+2023/12/05 04:09:35 Successfully canceled 0 order(s)
+2023/12/05 04:09:35 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/05 04:09:35 INFO datav2stream: established connection
+2023/12/05 04:09:35 INFO datav2stream: finished connection setup
+2023/12/05 04:13:25 TradingManager: ticker=AAPL
+2023/12/05 04:13:25 Successfully canceled 0 order(s)
+2023/12/05 04:13:25 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/05 04:13:25 INFO datav2stream: established connection
+2023/12/05 04:13:25 INFO datav2stream: finished connection setup
+2023/12/05 04:17:01 TradingManager: ticker=AAPL
+2023/12/05 04:17:01 Successfully canceled 0 order(s)
+2023/12/05 04:17:01 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/05 04:17:02 INFO datav2stream: established connection
+2023/12/05 04:17:02 INFO datav2stream: finished connection setup
+2023/12/05 04:20:14 TradingManager: ticker=AAPL
+2023/12/05 04:20:14 Successfully canceled 0 order(s)
+2023/12/05 04:20:14 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/05 04:20:14 INFO datav2stream: established connection
+2023/12/05 04:20:14 INFO datav2stream: finished connection setup
+2023/12/05 04:20:55 TradingManager: ticker=AAPL
+2023/12/05 04:20:55 Successfully canceled 0 order(s)
+2023/12/05 04:20:55 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/05 04:20:55 INFO datav2stream: established connection
+2023/12/05 04:20:55 INFO datav2stream: finished connection setup
+2023/12/05 04:21:36 TradingManager: ticker=AAPL
+2023/12/05 04:21:37 Successfully canceled 0 order(s)
+2023/12/05 04:21:37 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/05 04:21:37 INFO datav2stream: established connection
+2023/12/05 04:21:37 INFO datav2stream: auth error: connection limit exceeded
+2023/12/05 04:21:37 INFO datav2stream: retrying auth in 500ms, attempt 2/16
+2023/12/05 04:21:37 INFO datav2stream: auth error: connection limit exceeded
+2023/12/05 04:21:37 INFO datav2stream: retrying auth in 1s, attempt 3/16

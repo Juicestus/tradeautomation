@@ -16,7 +16,7 @@ func LoadAPIConfig(filename string) *APIConfig {
 	var cfg APIConfig
 	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatalf("Failed to open config file%s\n", filename)
+		log.Fatalf("Failed to open config file %s\n", filename)
 	}
 	defer file.Close()
 	parser := json.NewDecoder(file)

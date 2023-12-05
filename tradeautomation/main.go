@@ -4,14 +4,11 @@ package main
 import (
 	"context"
 	"log"
-  "net/http"
   "os"
-  "fmt"
   "io"
 )
 
 const (
-  prod = true
   logf = "tradeautomation.log"
 )
 
@@ -42,39 +39,16 @@ func main() {
 	if err := man.streamClient.Connect(ctx); err != nil {
 		log.Fatalf("Failed to connect to marketdata stream")
 	}
-  if prod {
-	  if err := man.streamClient.SubscribeToBars(man.OnBar, man.ticker); err != nil {
-		  log.Fatalf("Failed to subscribe to the marketdata stream")
-	  }
+  if err := man.streamClient.SubscribeToBars(man.OnBar, man.ticker); err != nil {
+    log.Fatalf("Failed to subscribe to the marketdata stream")
   }
+
 	go func() {
 		if err := <-man.streamClient.Terminated(); err != nil {
 			log.Fatalf("The marketdata stream was terminated")
 		}
 	}()
 
-  if !prod {
-    man.TestAlgorithm()
-  }
-
-  http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "no content")
-  })
-
-  http.HandleFunc("/log", func(w http.ResponseWriter, r *http.Request) {
-  	f, err := os.Open(logf)
-    if err != nil {
-      fmt.Fprintf(w, "Failed to retrive log file")
-      return
-    }
-    defer f.Close()
-    data, err := io.ReadAll(f)
-    if err != nil {
-      fmt.Fprintf(w, "Failed to retrive log file")
-      return
-    }
-    fmt.Fprintf(w, string(data))
-  })
-
-  log.Print(http.ListenAndServe(":80", nil))
+  for { }
 }
+

@@ -50,3 +50,8 @@
 2023/12/04 16:15:09 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
 2023/12/04 16:15:09 INFO datav2stream: established connection
 2023/12/04 16:15:09 INFO datav2stream: finished connection setup
+2023/12/04 22:06:12 TradingManager: ticker=AAPL
+2023/12/04 22:06:13 Successfully canceled 0 order(s)
+2023/12/04 22:06:13 INFO datav2stream: connecting to wss://stream.data.alpaca.markets/v2/iex, attempt 1/20 ...
+2023/12/04 22:06:13 INFO datav2stream: established connection
+2023/12/04 22:06:13 INFO datav2stream: finished connection setup

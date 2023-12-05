@@ -1,11 +1,4 @@
-(c) Justus Languell -- Proprietary and Confidential
+TradeAutomation package
 
-ssh -i "tradeautomation.pem" ec2-user@ec2-3-128-166-223.us-east-2.compute.amazonaws.com
-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
-
-watch https://www.youtube.com/watch?v=zh008MNMOlo
-watch https://www.youtube.com/watch?v=Nfy8wTN2EPk
-read  https://onlinelibrary.wiley.com/journal/15406261
-sample https://github.com/alpacahq/alpaca-trade-api-go/blob/master/examples/mean-reversion/mean-reversion.go
-
-
+Documentation:
+https://docs.google.com/document/d/15Xo4A2XX4VH1zziXwd8mb0S4FVRNwF79z8k_WOTpk8Q/edit?usp=sharing

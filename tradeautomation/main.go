@@ -23,6 +23,8 @@ func main() {
   wrt := io.MultiWriter(os.Stdout, f)
   log.SetOutput(wrt)
 
+  go RunWebClient("nohup.out", false)
+
 	cfg := LoadAPIConfig("secret.json")
 	//log.Println(cfg.String())
 
@@ -48,6 +50,7 @@ func main() {
 			log.Fatalf("The marketdata stream was terminated")
 		}
 	}()
+
 
   for { }
 }

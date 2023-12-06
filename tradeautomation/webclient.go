@@ -1,4 +1,14 @@
-{
+package main
+
+import (
+	"fmt"
+	"os"
+  "log"
+  "net/http"
+  "io"
+)
+
+func RunWebClient(logf string, prod bool) {
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "no content")
   })
@@ -18,5 +28,10 @@
     fmt.Fprintf(w, string(data))
   })
 
-  log.Print(http.ListenAndServe(":80", nil))
+  if prod {
+    log.Print(http.ListenAndServe("0.0.0.0:80", nil))
+  } else {
+    log.Print(http.ListenAndServe("127.0.0.1:8080", nil))
+  }
+
 }

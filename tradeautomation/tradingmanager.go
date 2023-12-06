@@ -76,7 +76,7 @@ func (man *TradingManager) CancelAllOrders() error {
 }
 
 func (man *TradingManager) OnBar(currentBar stream.Bar) {
-  log.Println("TradingManager recived new bar (#%d)", man.openbars)
+  log.Printf("\nTradingManager recived new bar (#%d)", man.openbars)
 	clock := man.GetClockFatal()
 
 	if !clock.IsOpen {
@@ -86,9 +86,9 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
 	}
   man.openbars += 1
 
-  // make sure len(data) >= siglen
+  // make sure len(data) >= siglen (||stdlen)
   if man.openbars < stdlen {
-    log.Printf("Not enough bars of data for the trading day (%d of %d)", man.openbars, stdlen)
+    log.Printf("Not enough bars of data for the trading day (%d of %d)", man.openbars, siglen)
     return;
   }
 
@@ -98,7 +98,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
 
 	bars, err := man.dataClient.GetBars(man.ticker, marketdata.GetBarsRequest{
 		TimeFrame: marketdata.OneMin,
-		Start: time.Now().Add(-stdlen * time.Minute),
+		Start: time.Now().Add(-siglen * time.Minute),
 		End: time.Now(),
 		Feed: man.feed,
 	})

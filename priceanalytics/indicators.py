@@ -130,8 +130,9 @@ def __square_bounds_osc(close, _open, _len, sig_len):
 
     up1[0] = dn1[0] = sig[0] = close[0]
     up2[0] = dn2[0] = close[0] ** 2
+    #sig[0] = 0
 
-    print(alpha, alpha_sig, up1[0], dn1[0], up2[0], dn2[0], sig[0])
+    #print(alpha, alpha_sig, up1[0], dn1[0], up2[0], dn2[0], sig[0])
 
     for i in range(1, N):
         up1[i] = max(close[i], _open[i], up1[i - 1] - alpha * (up1[i - 1] - close[i]))

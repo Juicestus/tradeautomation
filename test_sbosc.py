@@ -58,14 +58,15 @@ def test_and_strat(total, _len, sig_len):
 
 def target(_len_range, sig_len_range, q, dataset):
     for _len in _len_range:
-        for sig_len in sig_len_range:
+        for sig_len_m in sig_len_range:
+            sig_len = (sig_len_m / 10) * _len
             tpr = test_and_strat(dataset, _len, sig_len)
             q.put((_len, sig_len, tpr))
 
 if __name__ == '__main__':
 
-    old_tdfs = load_cached_df_map(_dir="cache") # was @ interval = 5
-    old_dataset = old_tdfs['AAPL'] + old_tdfs['MSFT']
+    #old_tdfs = load_cached_df_map(_dir="cache") # was @ interval = 5
+    #old_dataset = old_tdfs['AAPL'] + old_tdfs['MSFT']
 
     tickers = ['AAPL', 'MSFT', 'AMZN']
     new_tdfs = download_df_map(tickers, interval=5)
@@ -73,7 +74,8 @@ if __name__ == '__main__':
     for ticker, dfs in new_tdfs.items():
         new_dataset += dfs
 
-    dataset = old_dataset + new_dataset
+    #dataset = old_dataset + new_dataset
+    dataset = new_dataset
 
     datapts = sum([len(df) for df in dataset])
     print("Loaded", len(dataset), "datasets containing", datapts, "datapoints")
@@ -92,14 +94,14 @@ if __name__ == '__main__':
         return list(a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
     test = 1
-    _len_range, ld = dif_range(4, 20)
+    _len_range, ld = dif_range(5, 100)
 
     procs = round(mp.cpu_count() * 3/4)
 
     _len_sets = n_ranges(_len_range, procs)
     print('Will start', procs, 'processes using _len_ranges: ', _len_sets)
 
-    sig_len_range, lr = dif_range(4, 40)
+    sig_len_range, lr = dif_range(10, 100)
     total = ld * lr
 
     q = mp.Queue()

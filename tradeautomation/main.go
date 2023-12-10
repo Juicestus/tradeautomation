@@ -23,7 +23,6 @@ func main() {
   wrt := io.MultiWriter(os.Stdout, f)
   log.SetOutput(wrt)
 
-  go RunWebClient("nohup.out", false)
 
 	cfg := LoadAPIConfig("secret.json")
 	//log.Println(cfg.String())
@@ -34,6 +33,8 @@ func main() {
   if err := man.CancelAllOrders(); err != nil {
     log.Print(err)
   }
+
+  go RunWebClient("nohup.out", false, man.GetClientData)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

@@ -14,7 +14,7 @@ import (
 
 const (
 	stdlen = 14
-	siglen = 28
+  siglen = 21
   apportionment = 1
   endDayBufferMins = 15
 )
@@ -27,6 +27,7 @@ type TradingManager struct {
 	lastOrder     string
 	ticker        string
   openbars      int
+  cd  ClientData
 }
 
 func InitTradingManager(config *APIConfig, ticker string) *TradingManager {
@@ -48,6 +49,9 @@ func InitTradingManager(config *APIConfig, ticker string) *TradingManager {
 		feed:          feed,
 		ticker:         ticker,
     openbars: 0,
+    cd: ClientData{
+      Ticker: ticker,
+    },
 	}
 	return manager;
 }
@@ -98,7 +102,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
 
 	bars, err := man.dataClient.GetBars(man.ticker, marketdata.GetBarsRequest{
 		TimeFrame: marketdata.OneMin,
-		Start: time.Now().Add(-siglen * time.Minute),
+    Start: time.Now().Add(time.Duration(-float64(man.openbars) * float64(time.Minute))),
 		End: time.Now(),
 		Feed: man.feed,
 	})
@@ -124,20 +128,45 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
 
   buyingPower, _ := account.BuyingPower.Float64()
 
-  posQty, _, err := man.GetPositionInfo()
+  posQty, posVal, err := man.GetPositionInfo()
   if err != nil {
     log.Printf("Get position failed, skipping bar")
     return
   }
 
+
+  man.cd.PosQty = posQty
+  man.cd.PosVal = posVal
+  man.cd.BuyingPower = buyingPower
+  man.cd.Close = _close
+  man.cd.Bull = bull
+  man.cd.Bear = bear
+  man.cd.Sig = sig
+
   // make sure the bot ends a little bit before closing
 	untilClose := clock.NextClose.Sub(clock.Timestamp)
   if untilClose.Minutes() <= endDayBufferMins {
-    log.Println("Market closing in %d minutes, liquidating positions", endDayBufferMins)
-    if _, err := man.tradeClient.ClosePosition(man.ticker, alpaca.ClosePositionRequest{}); err != nil {
-      log.Println("Failed to liquidate position")
+    //if _, err := man.tradeClient.ClosePosition(man.ticker, alpaca.ClosePositionRequest{}); err != nil {
+    //  log.Println("Failed to liquidate position")
+    //}
+    if posQty > 0 {
+      log.Println("Market closing in %d minutes, liquidating positions", endDayBufferMins)
+      order := LimitOrder{
+        Qty: posQty,
+        Side: "sell",
+        Ticker: man.ticker,
+        Price: currentPrice,
+      }
+      err := man.PlaceOrder(order)
+      if err != nil {
+        log.Printf("Failed to liquidate positions")
+      } else {
+        log.Println("Positions liquidated successfully")
+      }
+    } else {
+      log.Println("Market closing in %d minutes, haulting trading", endDayBufferMins)
     }
-    log.Println("Positions liquidated successfully")
+
   }
 
   log.Printf("Current trading price of %s is $%.2f", man.ticker, currentPrice)
@@ -188,6 +217,7 @@ func (man* TradingManager) PlaceOrder(order Order) error {
   if order.OrderQty() <= 0 {
 		log.Printf("Order %s not sent because qty <= 0", order.String())
 	}
+  man.cd.OrderHistory = append(man.cd.OrderHistory, order)
   orderRes, err := man.tradeClient.PlaceOrder(order.OrderRequest())
   if err != nil {
     log.Printf("Order %s failed to place", order)
@@ -226,3 +256,6 @@ func (man* TradingManager) GetClockFatal() *alpaca.Clock {
 	return clock
 }
 
+func (man* TradingManager) GetClientData() ClientData {
+  return man.cd
+}

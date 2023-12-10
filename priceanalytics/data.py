@@ -124,7 +124,7 @@ class Slicer:
         self.end = start
     def valid(self):
         l = self.len()
-        return self.weekday < 5 and 170 < l and l < 200
+        return self.weekday < 5 #and 170 < l and l < 200
     def __str__(self):
         return f"{self.start} - {self.end} = {self.len()} ({self.weekday})"
     def __len__(self):

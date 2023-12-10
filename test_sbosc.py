@@ -34,13 +34,19 @@ def test_and_strat(total, _len, sig_len):
         with Backtester(df, verbose=False) as b:
             for i, fr in b:
                 if b.crossover("sbosc_bull", "sbosc_bear"):
-                    b.buy()
+                    if not b.in_position: #should probably do this check automatically
+                        b.buy()
     #                 print("buy @ $", b.at(i))
 
                 elif b.crossover("sbosc_signal", "sbosc_bull"):
-                    b.sell()
+                    if b.in_position: #should also probably do this check automatically
+                        b.sell()
     #                 print("sell @ $", b.at(i))
     #             b.sell()
+
+                if b.in_position:
+                    if i >= len(df) - 1:
+                        b.sell()
 
             incr = b.results(1)
             tpr *= (1 + incr)
@@ -68,8 +74,8 @@ if __name__ == '__main__':
     #old_tdfs = load_cached_df_map(_dir="cache") # was @ interval = 5
     #old_dataset = old_tdfs['AAPL'] + old_tdfs['MSFT']
 
-    tickers = ['AAPL', 'MSFT', 'AMZN']
-    new_tdfs = download_df_map(tickers, interval=5)
+    tickers = ['AAPL', 'MSFT', 'AMZN', 'NVDA']
+    new_tdfs = download_df_map(tickers, interval=1)
     new_dataset = []
     for ticker, dfs in new_tdfs.items():
         new_dataset += dfs

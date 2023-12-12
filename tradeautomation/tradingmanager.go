@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	stdlen = 14
-  siglen = 21
+	stdlen = 26
+  siglen = 146
   apportionment = 1
   endDayBufferMins = 15
 )
@@ -51,6 +51,7 @@ func InitTradingManager(config *APIConfig, ticker string) *TradingManager {
     openbars: 0,
     cd: ClientData{
       Ticker: ticker,
+      Status: "MARKET NOT OPEN/INITIALIZING",
     },
 	}
 	return manager;
@@ -80,18 +81,43 @@ func (man *TradingManager) CancelAllOrders() error {
 }
 
 func (man *TradingManager) OnBar(currentBar stream.Bar) {
-  log.Printf("\nTradingManager recived new bar (#%d)", man.openbars)
 	clock := man.GetClockFatal()
+
+  account, err := man.tradeClient.GetAccount()
+  if err != nil {
+    fmt.Printf("Could not get account data")
+    return
+  }
+
+  buyingPower, _ := account.BuyingPower.Float64()
+
+  posQty, posVal, err := man.GetPositionInfo()
+  if err != nil {
+    log.Printf("Get position failed, skipping bar")
+    return
+  }
+
+  man.cd.PosQty = posQty
+  man.cd.PosVal = posVal
+  man.cd.BuyingPower = buyingPower
+  man.cd.Recent = currentBar.Close
 
 	if !clock.IsOpen {
     log.Println("Market is not open yet")
     man.openbars = 0
+    man.cd.Status = "MARKET NOT OPEN"
 		return
 	}
-  man.openbars += 1
+  //man.openbars += 1
 
-  // make sure len(data) >= siglen (||stdlen)
+  today := time.Now().UTC()
+  sinceOpen := today.Sub(time.Date(today.Year(), today.Month(), today.Day(), 14, 30, 0, 0, time.UTC))
+  man.openbars = int(sinceOpen.Minutes())
+
+  log.Printf("TradingManager recived new bar (#%d)", man.openbars)
+
   if man.openbars < stdlen {
+    man.cd.Status = "MARKET OPEN LOADING DATA"
     log.Printf("Not enough bars of data for the trading day (%d of %d)", man.openbars, siglen)
     return;
   }
@@ -120,25 +146,8 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
 
   currentPrice := _close[len(_close) - 1]
 
-  account, err := man.tradeClient.GetAccount()
-  if err != nil {
-    fmt.Printf("Could not get account data")
-    return
-  }
-
-  buyingPower, _ := account.BuyingPower.Float64()
-
-  posQty, posVal, err := man.GetPositionInfo()
-  if err != nil {
-    log.Printf("Get position failed, skipping bar")
-    return
-  }
-
-
-  man.cd.PosQty = posQty
-  man.cd.PosVal = posVal
-  man.cd.BuyingPower = buyingPower
   man.cd.Close = _close
+
   man.cd.Bull = bull
   man.cd.Bear = bear
   man.cd.Sig = sig
@@ -149,6 +158,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
     //if _, err := man.tradeClient.ClosePosition(man.ticker, alpaca.ClosePositionRequest{}); err != nil {
     //  log.Println("Failed to liquidate position")
     //}
+    man.cd.Status = "MARKET OPEN, END OF DAY LIQUIDATION"
     if posQty > 0 {
       log.Println("Market closing in %d minutes, liquidating positions", endDayBufferMins)
       order := LimitOrder{
@@ -168,6 +178,8 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
     }
 
   }
+
+  man.cd.Status = "MAKET OPEN, ACTIVE"
 
   log.Printf("Current trading price of %s is $%.2f", man.ticker, currentPrice)
   log.Printf("Account buying power is $%.2f", buyingPower)
@@ -191,6 +203,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
       Side: "buy",
       Ticker: man.ticker,
       Price: currentPrice,
+      Time: time.Now().UTC(),
     }
     err := man.PlaceOrder(order)
     if err != nil {
@@ -205,6 +218,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
       Side: "sell",
       Ticker: man.ticker,
       Price: currentPrice,
+      Time: time.Now().UTC(),
     }
     err := man.PlaceOrder(order)
     if err != nil {
@@ -217,8 +231,9 @@ func (man* TradingManager) PlaceOrder(order Order) error {
   if order.OrderQty() <= 0 {
 		log.Printf("Order %s not sent because qty <= 0", order.String())
 	}
+  req := order.OrderRequest()
   man.cd.OrderHistory = append(man.cd.OrderHistory, order)
-  orderRes, err := man.tradeClient.PlaceOrder(order.OrderRequest())
+  orderRes, err := man.tradeClient.PlaceOrder(req)
   if err != nil {
     log.Printf("Order %s failed to place", order)
     return err

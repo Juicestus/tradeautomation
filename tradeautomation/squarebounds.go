@@ -49,7 +49,7 @@ func SquareBoundsOscilator(_open []float64, _close []float64, stdlen int, siglen
 	bear := make([]float64, N)
 	sig := make([]float64, N)
 
-  up1[0] =  _close[0]
+  up1[0] = _close[0]
   dn1[0] = _close[0]
   sig[0] = _close[0]
 

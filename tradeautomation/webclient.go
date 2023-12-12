@@ -45,6 +45,8 @@ type ClientData struct {
   PosVal float64
   BuyingPower float64
   OrderHistory []Order
+  Recent float64
+  Status string
 
   // Should abstract these -- worry abt that later
   Close []float64
@@ -55,18 +57,29 @@ type ClientData struct {
 
 func RunWebClient(logf string, prod bool, sup func()ClientData) {
 
-  cd := sup()
-
-  d, err := LoadHTML("templates/dashboard.html")
-  if err != nil {
-    log.Fatal(err)
-  }
 
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+    cd := sup()
+
+    d, err := LoadHTML("templates/dashboard.html")
+    if err != nil {
+      log.Fatal(err)
+      fmt.Fprintf(w, "cannot load dashboard")
+    }
+
+    d.Fill("status", cd.Status)
     d.Fill("tkr", cd.Ticker)
     d.Fill("qty", fmt.Sprintf("%d", cd.PosQty))
     d.Fill("val", fmt.Sprintf("%.2f", cd.PosVal))
     d.Fill("buypwr", fmt.Sprintf("%.2f", cd.BuyingPower))
+    d.Fill("price", fmt.Sprintf("%.2f", cd.Recent))
+
+    orderTbl := ""
+    for _, order := range cd.OrderHistory {
+      orderTbl += fmt.Sprintf("<tr><td><p>%s</p></td><td><p>%s</p></td></tr>", order.Timestamp(), order.String())
+    }
+    d.Fill("orders", orderTbl)
 
     d.Write(w)
   })

@@ -9,25 +9,58 @@
   <meta name="author" content="">
   <link rel="stylesheet" href="css/style.css">
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <style>
+h1, h2, h3, h4, h5, h6, p, a {
+  font-family: Helvetica, sans-serif;
+}
+
+table, th, td {
+  border: 1px solid;
+}
+
+td {
+  padding: 1px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+  </style>
+
 </head>
 
 <body>
 
 <div class="container">
+  <a href="/log">log</a>
+
   <h2>Dashboard</h2>
   <table>
+
     <tr>
-      <td>Ticker</td><td>{{tkr}}</td>
+      <td><p>Status</p></td><td><code>{{status}}</code></td>
     </tr>
     <tr>
-      <td>Current position quantity</td><td>{{qty}} shares</td>
+      <td><p>Ticker</p></td><td><code>{{tkr}}</code></td>
     </tr>
     <tr>
-      <td>Current position value</td><td>${{val}}</td>
+      <td><p>Current ticker price</p></td><td><code>${{price}}</code></td>
+    </tr>
+
+
+    <tr>
+      <td><p>Current position quantity</p></td><td><p><code>{{qty}}</code>&nbsp;shares</p></td>
     </tr>
     <tr>
-      <td>Buying power</td><td>${{buypwr}}</td>
+      <td><p>Current position value</p></td><td><code>${{val}}</code></td>
     </tr>
+    <tr>
+      <td><p>Buying power</p></td><td><code>${{buypwr}}</code></td>
+    </tr>
+  </table>
+
+  <h2>Order History</h2>
+  <table>
+    <tr><th><h4>UTC</h4></th><th><h4>Order</h4></th></tr>
+    {{orders}}
   </table>
 </div>
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+  "time"
 
 	"github.com/shopspring/decimal"
 	"github.com/alpacahq/alpaca-trade-api-go/v3/alpaca"
@@ -11,6 +12,7 @@ type Order interface {
   OrderRequest() alpaca.PlaceOrderRequest
   String() string
   OrderQty() int
+  Timestamp() string
 }
 
 type LimitOrder struct {
@@ -18,6 +20,7 @@ type LimitOrder struct {
   Ticker string
   Price float64
   Side string
+  Time time.Time
 }
 
 func (o LimitOrder) OrderQty() int {
@@ -26,6 +29,10 @@ func (o LimitOrder) OrderQty() int {
 
 func (o LimitOrder) String() string {
   return fmt.Sprintf("limit %s %d * %s @ $%.2f Σ $%.2f", o.Side, o.Qty, o.Ticker, o.Price, o.Price * float64(o.Qty))
+}
+
+func (o LimitOrder) Timestamp() string {
+  return o.Time.Format("2006-01-02 15:04:05")
 }
 
 // This could be made a lot better (ie stop loss)

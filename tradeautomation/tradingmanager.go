@@ -12,6 +12,11 @@ import (
 	"github.com/alpacahq/alpaca-trade-api-go/v3/marketdata/stream"
 )
 
+// one day speculator will buy all the air
+// not to breathe, only for hodl
+// and everyone will suffocate
+// and finally speculator will be sad
+
 const (
 	stdlen = 26
   siglen = 146
@@ -118,7 +123,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
 
   if man.openbars < stdlen {
     man.cd.Status = "MARKET OPEN LOADING DATA"
-    log.Printf("Not enough bars of data for the trading day (%d of %d)", man.openbars, siglen)
+    log.Printf("Not enough bars of data for the trading day (%d of %d)", man.openbars, stdlen)
     return;
   }
 
@@ -155,17 +160,17 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
   // make sure the bot ends a little bit before closing
 	untilClose := clock.NextClose.Sub(clock.Timestamp)
   if untilClose.Minutes() <= endDayBufferMins {
-    //if _, err := man.tradeClient.ClosePosition(man.ticker, alpaca.ClosePositionRequest{}); err != nil {
-    //  log.Println("Failed to liquidate position")
-    //}
     man.cd.Status = "MARKET OPEN, END OF DAY LIQUIDATION"
     if posQty > 0 {
+      // maybe if get to this area and long condition still true
+      // continue to "hodl" overnight
       log.Println("Market closing in %d minutes, liquidating positions", endDayBufferMins)
       order := LimitOrder{
         Qty: posQty,
         Side: "sell",
         Ticker: man.ticker,
         Price: currentPrice,
+        Time: time.Time().UTC()
       }
       err := man.PlaceOrder(order)
       if err != nil {
@@ -176,7 +181,7 @@ func (man *TradingManager) OnBar(currentBar stream.Bar) {
     } else {
       log.Println("Market closing in %d minutes, haulting trading", endDayBufferMins)
     }
-
+    return;
   }
 
   man.cd.Status = "MAKET OPEN, ACTIVE"

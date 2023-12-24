@@ -15,7 +15,7 @@ Important Directories
 
 - squarebounds: For the "squarebounds"/"sbosc" model
 
-- brownian: For the next-generation statistical physics models
+- stochastics: For the testing of stochastic models
 
 priceanalytics
 ==============

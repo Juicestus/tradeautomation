@@ -1,3 +1,3 @@
-# Brownian Motion 
+# Stochastics
 
-Simulating stock prices using Brownian Motion
+Using stochastic models to predict stock movements.

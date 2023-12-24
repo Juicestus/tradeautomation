@@ -92,31 +92,31 @@ class Backtester(object):
         self.i_price = self.price_at(self.i)
         return self.i, self.fr
 
-    def crossover(self, k1, k2):
-        return self.fr[k1][-1] > self.fr[k2][-1] \
-            and self.fr[k1][-2] < self.fr[k2][-2]
+    def buy(self, bypass=False):
+        if not self.in_position or bypass:
+            self.buys[self.i] = self.price_at(self.i)
+            self.in_position = True
 
-    def buy(self):
-        self.in_position = True
-        self.buys[self.i] = self.price_at(self.i)
+    def sell(self, bypass=False):
+        if self.in_position or bypass:
+            self.sells[self.i] = self.price_at(self.i)
+            self.in_position = False
 
-    def sell(self):
-        self.in_position = False
-        self.sells[self.i] = self.price_at(self.i)
-
+    # Returns price at i (deprecated)
     def at(self, i):
         return self.df['close'][i]
 
+    # Returns price at i
     def price_at(self, i):
         return self.at(i)
 
+    # Returns current price
     def price(self):
         if self.i_price is None:
             raise Exception("Cannot access this function from outside iteration")
         return self.i_price
 
-
-
+# Percent from a proportion
 def perc_ret(incr):
     return round(incr * 100, 2)
 

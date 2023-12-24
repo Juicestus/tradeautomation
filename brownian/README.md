@@ -1,3 +1,3 @@
-# Brownian Motion and Stochastic Volatility Stock Predictions
+# Brownian Motion 
 
-Simulating stock prices using Brownian Motion and Stochastic Volatility models
+Simulating stock prices using Brownian Motion

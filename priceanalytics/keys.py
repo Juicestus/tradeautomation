@@ -1,2 +1,8 @@
-API_KEY = "PKZ0OGU1HXHM4KIN24YP"
-SECRET_KEY = "PLP3gUbi8VmVs8bGhXkG6AOjKavGbipNwo1rmfTS"
+import json, pathlib
+p = pathlib.Path(__file__).parent.resolve().parent.resolve()
+fn = str(p) + '/secret.json'
+obj = ""
+with open(fn, 'r') as f:
+    obj = json.loads(f.read())
+API_KEY = obj['ApiKey']
+SECRET_KEY = obj['SecretKey']

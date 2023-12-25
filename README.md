@@ -1,28 +1,25 @@
-Monorepo of trading algorithms
+# Trading Algorithms
 
-Important Directories
-====================
+Monorepo of trading algorithms, plotting libraries, research, and execution infrastructure.
 
-- priceanalytics: Python library for creating/testing models
-  (see additional priceanalytics information later)
+## Model to Strategy Pipeline
+1. Proofs and notes in Jupyter
+2. Model backtesting in Python
+3. Tune parameters
+4. Implement in Go, paper-trade on Alpaca
+5. Production and Deployment 😉
 
-- tradeautomation: Infrastructure for executing models in
-  production, written in Go
-  (see additional tradeautomation information later)
+## priceanalytics
+Python library for creating and backtesting models
+- [backtest](./priceanalytics/backtest.py): Backtesting utility class
+- [data](./priceanalytics/data.py): Retrieves data using Alpaca SDK 
+- [indicators](./priceanalytics/indicators.py): Package for commmonly used math/stat/analytic functions
+- [keys](./priceanalytics/keys.py): Holds keys as string literals - to be replaced
 
-# The following are model directories and contain notebooks
-# and scirpts for testing their respective models
+## strategies
+Strategy research
+- [squarebounds](./strategies/squarebounds/): Proprietary trading algorithm in production
+- [stochastics](./strategies/stochastics/): Research and testing of stochastic algorithms
 
-- squarebounds: For the "squarebounds"/"sbosc" model
-
-- stochastics: For the testing of stochastic models
-
-priceanalytics
-==============
-Has a few packages:
-- backtest
-- data        (deprecated)
-- indicators  package for commmonly used math/stat/analytic functions
-- keys        (deprecated) holds keys as string literals, will
-              replaced with a config file reader like tradeautomation
-- plot        package with plotting utilities
+## tradeautomation
+Infrastructure for executing strategies in production written in Go. 

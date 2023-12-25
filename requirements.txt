@@ -1,2 +1,4 @@
 alpaca-py
-backtesting
+numpy
+pandas
+matplotlib

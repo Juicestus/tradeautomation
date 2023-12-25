@@ -5,7 +5,7 @@ from priceanalytics.plot import MultiPlot
 import matplotlib.pyplot as plt, numpy as np
 
 class Backtester(object):
-    def __init__(self, df, start=50, verbose=False):
+    def __init__(self, df, start=1, verbose=False):
         self.df = df
         self.i = start - 1
         self.m = len(df.index)
@@ -96,11 +96,15 @@ class Backtester(object):
         if not self.in_position or bypass:
             self.buys[self.i] = self.price_at(self.i)
             self.in_position = True
+            return True
+        return False
 
     def sell(self, bypass=False):
         if self.in_position or bypass:
             self.sells[self.i] = self.price_at(self.i)
             self.in_position = False
+            return True
+        return False
 
     # Returns price at i (deprecated)
     def at(self, i):

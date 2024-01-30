@@ -7,6 +7,7 @@ from alpaca.data.timeframe import TimeFrame, TimeFrameUnit
 
 import datetime as dt
 import pandas as pd
+import numpy as np
 import priceanalytics.keys as keys
 from priceanalytics.backtest import perc_ret
 
@@ -56,18 +57,28 @@ def split_alpaca_on_day(df):
     return dfs
 
 def normalize(ser, init=1):
-    ser = ser.to_numpy()
     N = len(ser)
-    norm, _ = np.zeroes((2, N))
+    norm, _ = np.zeros((2, N))
     norm[0] = init
     for i in range(1, N):
         norm[i] = (ser[i] / ser[i-1]) * norm[i-1]
     return norm
 
-def normalize_series(dfs, key):
-    ds = [1]
+def normalize_dataset(dfs, f):
+    norm = np.array([])
+    init = 1
     for df in dfs:
-        ds += (normalize(df[key], init=ds[-1]))
-    return pd.Series(ds)
+        new = normalize(f(df), init=init)
+        norm = np.concatenate((norm, new))
+        init = new[-1]
+    return norm
 
+#def normalize_pdseries(ser):
+#    return normalize(ser.to_numpy())
+
+#def normalize_series(dfs, key):
+#    ds = [1]
+#    for df in dfs:
+#        ds += (normalize(df[key], init=ds[-1]))
+#    return pd.Series(ds)
 

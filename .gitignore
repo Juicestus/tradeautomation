@@ -1,2 +1,14 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-*
+
+.DS_Store
+.ipynb_checkpoints/
+bin/
+lib/
+priceanalytics/.ipynb_checkpoints/
+pyvenv.cfg
+share/
+strategies/simple/
+strategies/squarebounds/.ipynb_checkpoints/
+strategies/squarebounds2/.ipynb_checkpoints/
+strategies/stochastics/.ipynb_checkpoints/
+strategies/stochastics/Stochastic Analytics.ipynb
+tradeautomation/.DS_Store

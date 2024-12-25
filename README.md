@@ -2,6 +2,12 @@
 
 Infrastructure for executing strategies in production. Written in Go. 
 
+## Beautiful Web Dashboard
+
+Very pretty.
+
+![beautiful web dashboard](imgs/webdashboard.png)
+
 ## Strategy
 
 The current strategy "squarebounds" is not good. Its there to provide an example of interface. Use at your own discression.
